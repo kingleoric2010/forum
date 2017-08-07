@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 
 from block.models import Block
 from article.models import Article
+from article.forms import ArticleForm
 # Create your views here.
 
 
@@ -28,6 +29,22 @@ def article_detail(request, article_id):
 def article_create(request,block_id):
     block_id = int(block_id)
     if request.method == "GET":
+        return render(request, 'article_create.html',{"b": block_id})
+    else:
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            article = Article(block_id=block_id, title=form.cleaned_data["title"],owner=request.user, content=form.cleaned_data["title"], status=0)
+            article.save()
+            return redirect("/article_list/%s" %block_id)
+        else:
+            return render(request,"article_create.html",{"b":block_id,"form":form})
+
+
+
+'''
+def article_create(request,block_id):
+    block_id = int(block_id)
+    if request.method == "GET":
         return render(request, 'article_create.html',{"b": block,"error":error})
     else:
         title = request.POST.get("title").strip()
@@ -44,3 +61,4 @@ def article_create(request,block_id):
         #return HttpResponseRedirect(reverse("article_list", args=(block_id,)))
         #return redirect(reverse("article_list", args=[block_id]))
         #return redirect(reverse("article_list", kwargs={"block_id": block_id}))
+'''
