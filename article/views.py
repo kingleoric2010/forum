@@ -15,10 +15,8 @@ from article.models import Article
 def article_list(request,block_id):
     block_id = int(block_id)
     block = Block.objects.get(id=block_id)
-    print (block)
     article_infos = Article.objects.filter(block=block).order_by("-id")
     paginator = Paginator(article_infos,3,2)
-    print (paginator)
     page = request.GET.get('page')
     try:
         articl = paginator.page(page)
@@ -27,9 +25,11 @@ def article_list(request,block_id):
     except EmptyPage :
         articl = paginator.page(paginator.num_pages)
     print (articl)
+    print (type(articl))
+    print (paginator.page_range)
+    #print (articl.page_range)
     #assert False
-    return render(request,'article_list.html', {"articles": articl, "b":block_id})
-
+    return render(request,'article_list.html', {"article_page": articl, "b":block_id,"articles": article_infos })
 #    return render(request,'article_list.html',{"articles": article_infos,"b":block_id})
 
 def article_detail(request, article_id):
